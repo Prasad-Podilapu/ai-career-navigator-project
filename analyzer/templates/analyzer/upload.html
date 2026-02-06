@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Resume</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'analyzer/index.css' %}">
+</head>
+
+<body>
+
+<header class="main-header">
+  <div class="logo">AI Career Navigator</div>
+  <a href="{% url 'home' %}" class="upload-link">← Back to Home</a>
+</header>
+
+<section class="cta-section">
+  <div class="cta-box">
+    <h2>Upload Your Resume</h2>
+    <p>Get instant AI-powered career insights</p>
+  </div>
+</section>
+
+<section class="upload-section">
+  <div class="upload-box">
+    <h2>Select Resume File</h2>
+    <p class="upload-formats">Supported formats: PDF, DOCX, TXT</p>
+
+    <form id="resumeForm" enctype="multipart/form-data">
+
+      <!-- Upload Area -->
+      <div id="drop-area" class="upload-drop">
+        <div style="font-size:2rem;">⬆️</div>
+        <div><strong>Drag and drop your resume here</strong></div>
+        <div>or</div>
+
+        <!-- Browse Button -->
+        <button type="button" id="browse-btn" class="btn browse-btn">
+          Browse Files
+        </button>
+
+        <!-- Hidden File Input -->
+        <input
+          type="file"
+          id="resume-upload"
+          name="resume"
+          accept=".pdf,.doc,.docx,.txt"
+          style="display:none;"
+        >
+
+        <!-- File name display -->
+        <p id="file-name" style="margin-top:10px; font-weight:600;"></p>
+      </div>
+
+      <!-- Job Description -->
+      <div class="job-desc-box">
+        <h3 id="job">Paste Job Description</h3>
+        <textarea
+          id="job-description"
+          name="job_desc"
+          rows="8"
+          placeholder="Paste the full job description here..."
+        ></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn analyze-btn">
+        Analyze Resume
+      </button>
+
+    </form>
+
+    <p class="upload-note">
+      Your resume and job description will be analyzed using AI to provide
+      key summary, skill gap, job matching, and roadmap.
+    </p>
+
+  </div>
+</section>
+
+<footer class="main-footer">
+  <div>© 2025 AI Career Navigator</div>
+</footer>
+
+<!-- ✅ JS ONLY AT BOTTOM -->
+<script src="{% static 'analyzer/upload.js' %}"></script>
+
+</body>
+</html>
