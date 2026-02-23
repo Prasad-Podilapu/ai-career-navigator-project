@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Career Navigator</title>
+  <link rel="stylesheet" href="{% static 'analyzer/index.css' %}">
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo">AI Career Navigator</div>
+  <a href="{% url 'upload' %}" class="upload-link">Upload Resume</a>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Navigate Your Career<br>with <span class="highlight">AI Precision</span></h1>
+    <p>
+      Upload your resume and get instant AI-powered insights.
+      Identify skill gaps, discover matching opportunities, and chart your personalized career roadmap.
+    </p>
+    <div class="hero-actions">
+      <a href="{% url 'upload' %}" class="btn primary">Get Started</a>
+      <a href="#features" class="btn secondary">Learn More</a>
+    </div>
+  </div>
+
+  <div class="hero-image">
+  <img src="{% static 'analyzer/image.png' %}" alt="AI Career Navigator">
+  <div class="ai-badge">
+    100%<br><span>AI-Powered</span>
+  </div>
+    </div>
+
+</section>
+<section class="features" id="features">
+  <h2>Powerful Features</h2>
+  <p class="features-sub">Everything you need to advance your career</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3>Smart Resume Analysis</h3>
+      <p>AI-powered deep analysis of your resume content</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <h3>Skill Gap Identification</h3>
+      <p>Discover missing skills and recommendations</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎁</div>
+      <h3>Job Matching</h3>
+      <p>Find best matching opportunities</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✔️</div>
+      <h3>Career Roadmap</h3>
+      <p>Personalized step-by-step plan</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-box">
+    <h2>Ready to Transform Your Career?</h2>
+    <p>Upload your resume now and get instant AI-powered insights</p>
+    <a href="{% url 'upload' %}" class="btn upload-btn">⬆️ Upload Resume</a>
+  </div>
+</section>
+
+<footer class="main-footer">
+  <div>© 2025 AI Career Navigator. Empowering careers with AI precision.</div>
+  <div class="footer-badge">Krish@techs</div>
+</footer>
+
+<script src="{% static 'analyzer/index.js' %}"></script>
+</body>
+</html>

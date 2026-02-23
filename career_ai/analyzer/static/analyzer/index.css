@@ -1,0 +1,219 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f7f9fc;
+  margin: 0;
+  color: #222;
+}
+
+/* HEADER */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2.5rem;
+  background: #a5a97f;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.04);
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 2.4rem;
+  color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+.logo:hover{
+  color: #0d0c0b;
+  text-shadow: 0 0 5px #14191a, 0 0 10px #292d2d;
+}
+
+.upload-link {
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.4rem;
+   color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+.upload-link:hover{
+    color: #0d0c0b;
+  text-shadow: 0 0 5px #14191a, 0 0 10px #292d2d;
+}
+
+/* HERO */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 3rem 2rem;
+}
+
+.hero-content {
+  max-width: 540px;
+}
+
+.hero-content h1 {
+  font-size: 2.7rem;
+}
+
+.highlight {
+  color: #5b6dfa;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.8rem 1.7rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.primary {
+  background: #5b6dfa;
+  color: #fff;
+}
+
+.secondary {
+  background: #f4f6fb;
+  color: #5b6dfa;
+}
+
+.hero-image {
+  position: relative;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 580px;
+  border-radius: 18px;
+}
+
+.ai-badge {
+  position: absolute;
+  bottom: 25px;
+  right: 15px;
+  background:#5b6dfa;
+  color: #f8f8f8;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+}
+
+/* FEATURES */
+.features {
+  background: #a5a97f;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.features-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.feature-card {
+  background: #f7f9fc;
+  padding: 2rem;
+  border-radius: 14px;
+  max-width: 270px;
+}
+
+/* CTA */
+.cta-section {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.cta-box {
+  background: linear-gradient(135deg, #5b61f6, #4b4fd6);
+  color: #fff;
+  padding: 2.5rem;
+  border-radius: 18px;
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.upload-btn {
+  background: #fff;
+  color: #111;
+  font-weight: 600;
+}
+
+/* UPLOAD */
+.upload-section {
+  display: flex;
+  justify-content: center;
+  padding: 2px;
+}
+
+.upload-box {
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+}
+
+.upload-drop {
+  border: 2px dashed #bfc6e9;
+  border-radius: 14px;
+  padding: 2rem 1rem;
+  margin: 1.5rem 0;
+}
+
+.upload-drop:hover{
+   border: 2px dashed #26acc7;
+}
+
+.analyze-btn {
+  background: #207a39;
+  width: 100%;
+  color: white;
+}
+
+/* FOOTER */
+.main-footer {
+  background: #fff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.job-desc-box {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.job-desc-box h3 {
+  margin-bottom: 0.3rem;
+}
+
+.job-desc-box textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.main-footer p {
+  margin: 0;
+}
+
+#job{
+  text-align: center;
+}
+.upload-formats{
+  text-align: center;
+}
+body {
+  background: #f7f9fc;
+}
