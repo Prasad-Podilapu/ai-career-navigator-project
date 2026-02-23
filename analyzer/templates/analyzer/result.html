@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Analysis Result</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'analyzer/index.css' %}">
+  <link rel="stylesheet" href="{% static 'analyzer/result.css' %}">
+</head>
+
+<body>
+
+<header class="main-header">
+  <div class="logo">AI Career Navigator</div>
+  <a href="{% url 'upload' %}" class="upload-link">Upload Again</a>
+</header>
+
+<section class="result-container">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="summary">Summary</button>
+    <button class="tab" data-tab="skills">Skills</button>
+    <button class="tab" data-tab="jobs">Job Matches</button>
+    <button class="tab" data-tab="roadmap">Roadmap</button>
+    <button class="tab" data-tab="strengths">Strengths</button>
+<button class="tab" data-tab="improvements">Improvements</button>
+
+  </div>
+
+  <!-- Summary -->
+  <div class="tab-content active" id="summary">
+    <h2>🧠 Analysis Summary</h2>
+    <p id="summary-text"></p>
+    <h3>Match Percentage</h3>
+    <div class="match-box">
+  <div class="match-text" id="match-percent"></div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+  <p style="font-size:14px; color:#666;">
+  Based on semantic similarity between resume and job description
+</p>
+
+  <h3>Overall Match Overview</h3>
+<canvas id="matchChart" height="120"></canvas>
+
+</div>
+
+  </div>
+
+  <!-- Skills -->
+  <div class="tab-content" id="skills">
+   <h2>🛠️ Skills</h2>
+
+    <h3>Matched Skills</h3>
+    <ul id="matched-skills"></ul>
+
+    <h3>Missing Skills</h3>
+    <ul id="missing-skills"></ul>
+
+    <h3>Skill Comparison</h3>
+    <canvas id="skillChart" height="150"></canvas>
+
+  </div>
+
+  <!-- Job Matches -->
+  <div class="tab-content" id="jobs">
+    <h2>💼Job Match Suggestions</h2>
+    <div class="job-cards" id="job-matches"></div>
+
+  </div>
+  <!-- Strengths -->
+<div class="tab-content" id="strengths">
+  <h2>💪Your Strengths</h2>
+  <ul id="strengths-list"></ul>
+</div>
+
+<!-- Improvements -->
+<div class="tab-content" id="improvements">
+  <h2>📈Suggested Improvements</h2>
+  <ul id="improvements-list"></ul>
+</div>
+
+  <!-- Roadmap -->
+  <div class="tab-content" id="roadmap">
+    <h2>🗺️Career Roadmap</h2>
+    <ul id="roadmap-list"></ul>
+  </div>
+
+</section>
+
+<!-- JS -->
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'analyzer/result.js' %}"></script>
+<script src="{% static 'analyzer/result.js' %}"></script>
+</body>
+</html>
