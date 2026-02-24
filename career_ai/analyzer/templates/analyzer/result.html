@@ -53,20 +53,32 @@
   </div>
 
   <!-- SKILLS TAB -->
-  <div class="tab-content" id="skills">
-    <h2>🛠️ Skills</h2>
+ <div class="tab-content" id="skills">
+  <h2>🛠️ Skills</h2>
 
-    <h3>Matched Skills</h3>
-    <ul id="matched-skills"></ul>
+  <div class="skills-grid">
 
-    <h3>Missing Skills</h3>
-    <ul id="missing-skills"></ul>
+    <!-- Matched -->
+    <div class="skills-card">
+      <h3>Technical Skills</h3>
+      <p class="skill-sub">Skills identified in your resume</p>
+      <div id="matched-skills" class="skill-tags"></div>
+    </div>
 
-    <h3>Skill Comparison</h3>
-   <div style="width:500px; height:300px; margin:auto;">
-    <canvas id="skillChart" width="500" height="300"></canvas>
-</div>
+    <!-- Missing -->
+    <div class="skills-card">
+      <h3>Recommended Skills to Add</h3>
+      <p class="skill-sub">Skills that could strengthen your profile</p>
+      <div id="missing-skills" class="skill-tags missing"></div>
+    </div>
+
   </div>
+
+  <h3 style="margin-top:30px;">Skill Comparison</h3>
+  <div style="width:500px; height:300px; margin:auto;">
+    <canvas id="skillChart" width="500" height="300"></canvas>
+  </div>
+</div>
 
   <!-- JOB MATCH TAB -->
   <div class="tab-content" id="jobs">
@@ -77,20 +89,19 @@
   <!-- STRENGTHS -->
   <div class="tab-content" id="strengths">
     <h2>💪 Your Strengths</h2>
-    <ul id="strengths-list"></ul>
-  </div>
+  <div id="strengths-list" class="strength-grid"></div> 
+  
+ </div>
 
   <!-- IMPROVEMENTS -->
   <div class="tab-content" id="improvements">
     <h2>📈 Suggested Improvements</h2>
-    <ul id="improvements-list"></ul>
-  </div>
+<div id="improvements-list" class="improvements-grid"></div>  </div>
 
   <!-- ROADMAP -->
   <div class="tab-content" id="roadmap">
-    <h2>🗺️ Career Roadmap</h2>
-    <ul id="roadmap-list"></ul>
-  </div>
+  <div id="roadmap-list" class="roadmap-container"></div>
+</div>
 
 </section>
 

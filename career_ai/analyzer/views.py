@@ -9,13 +9,13 @@ import docx
 import re
 
 # -------------------------------
-# Load AI models once (important for performance)
+# Load AI models once
 # -------------------------------
 semantic_model = SentenceTransformer("all-MiniLM-L6-v2")
 nlp = spacy.load("en_core_web_sm")
 
 # -------------------------------
-# Text Cleaning (for semantic match)
+# Text Cleaning
 # -------------------------------
 def clean_text(text):
     doc = nlp(text.lower())
@@ -27,7 +27,7 @@ def clean_text(text):
     return " ".join(tokens)
 
 # -------------------------------
-# Semantic Match (REAL AI)
+# Semantic Match
 # -------------------------------
 def semantic_match(resume_text, job_text):
     resume_text = clean_text(resume_text)
@@ -44,38 +44,26 @@ def semantic_match(resume_text, job_text):
 # Skill List
 # -------------------------------
 SKILLS = [
-
-    # Programming Languages
     "python", "java", "c", "c++", "c#", "javascript", "typescript",
-
-    # Web Technologies
     "html", "css", "bootstrap", "tailwind",
     "react", "angular", "vue",
     "node", "express",
     "django", "flask", "fastapi",
     "spring", "spring boot",
-
-    # Databases
     "sql", "mysql", "postgresql", "mongodb", "sqlite",
-
-    # Tools & DevOps
     "git", "github", "docker", "kubernetes",
     "aws", "azure", "gcp",
     "linux", "ci/cd", "jenkins",
-
-    # Data & AI
     "machine learning", "deep learning",
     "data science", "pandas", "numpy",
     "tensorflow", "pytorch",
-
-    # Concepts
     "rest api", "api",
     "oop", "data structures",
     "algorithms", "problem solving"
 ]
 
 # -------------------------------
-# Skill Extraction (FIXED – single version)
+# Skill Extraction
 # -------------------------------
 def extract_skills(text):
     text = text.lower()
@@ -89,7 +77,7 @@ def extract_skills(text):
     return list(found)
 
 # -------------------------------
-# Page views
+# Page Views
 # -------------------------------
 def home(request):
     return render(request, "analyzer/index.html")
@@ -101,7 +89,7 @@ def result_page(request):
     return render(request, "analyzer/result.html")
 
 # -------------------------------
-# API: Resume Analysis
+# Detect Profile Level
 # -------------------------------
 def detect_profile_level(text):
     text = text.lower()
@@ -116,8 +104,10 @@ def detect_profile_level(text):
         return "Student / Intern"
     else:
         return "General Candidate"
-    
-#-------------------------------
+
+# -------------------------------
+# API: Resume Analysis
+# -------------------------------
 @csrf_exempt
 def analyze_api(request):
     if request.method != "POST":
@@ -132,9 +122,6 @@ def analyze_api(request):
             status=400
         )
 
-    # -------------------------
-    # Read Resume (PDF / DOCX / TXT)
-    # -------------------------
     resume_text = ""
 
     try:
@@ -148,25 +135,20 @@ def analyze_api(request):
             for para in doc.paragraphs:
                 resume_text += para.text + " "
 
-        else:  # TXT
+        else:
             resume_text = resume_file.read().decode(errors="ignore")
 
-    except Exception as e:
+    except Exception:
         return JsonResponse(
             {"error": "Could not read resume file"},
             status=400
         )
 
-    # -------------------------
-    # Semantic Match (REAL AI SCORE)
-    # -------------------------
+    # Semantic Match
     match_percent = semantic_match(resume_text, job_desc)
-
     profile_level = detect_profile_level(resume_text)
 
-    # -------------------------
     # Skill Matching
-    # -------------------------
     resume_skills = extract_skills(resume_text)
     job_skills = extract_skills(job_desc)
 
@@ -174,58 +156,151 @@ def analyze_api(request):
     missing_skills = list(set(job_skills) - set(resume_skills))
 
     # -------------------------
-    # Summary Logic
-    # -------------------------
-    
-    # -------------------------
-    # Smart Detailed Summary
-    # -------------------------
-
-    total_job_skills = len(job_skills)
-    matched_count = len(matched_skills)
-    missing_count = len(missing_skills)
-
-    if match_percent >= 75:
-        level = "strong"
-    elif match_percent >= 40:
-        level = "moderate"
-    else:
-        level = "low"
-
-    summary = f"""
-You are identified as a {profile_level} candidate.
-
-Your resume shows a {level} alignment ({round(match_percent, 2)}%) with the provided job description.
-
-Out of {total_job_skills} important skills detected in the job posting,
-you currently match {matched_count} and are missing {missing_count}.
-
-Your strongest aligned skills: {', '.join(matched_skills) if matched_skills else 'None detected'}.
-
-Skills that need improvement: {', '.join(missing_skills) if missing_skills else 'None'}.
-
-To improve your chances, focus on enhancing the missing skills
-and aligning your academic or project work more closely with the job requirements.
-"""
-    # -------------------------
-    # Roadmap Generator
-    # -------------------------
-    roadmap = [
-        f"Learn {skill}: basics → practice → mini project → add to resume"
-        for skill in missing_skills
-    ]
-    # -------------------------
-# Strengths & Improvements
+# Advanced Resume-Based Summary
 # -------------------------
-    strengths = []
-    improvements = []
 
-    for skill in matched_skills:
-        strengths.append(f"Strong knowledge of {skill}")
+    # Detect experience indicators
+    experience_keywords = ["project", "intern", "experience", "developed", "built"]
+    has_experience = any(word in resume_text.lower() for word in experience_keywords)
+
+    # Select top skills from resume (not just matched)
+    top_resume_skills = ", ".join(resume_skills[:5]) if resume_skills else "various technical skills"
+
+    # Alignment tone
+    if match_percent >= 75:
+        alignment_text = "strong alignment with the job requirements"
+    elif match_percent >= 40:
+        alignment_text = "moderate alignment with the job requirements"
+    else:
+        alignment_text = "limited alignment with the job requirements"
+
+    # Experience sentence
+    if has_experience:
+        experience_line = "The resume reflects practical exposure through projects or hands-on development experience."
+    else:
+        experience_line = "The profile appears academically focused with foundational technical exposure."
+
+    summary = (
+        f"{profile_level} candidate with technical expertise in {top_resume_skills}. "
+        f"The resume demonstrates {alignment_text} ({round(match_percent,2)}%). "
+        f"{experience_line} "
+        f"The candidate is suitable for entry-level or growth-oriented technical roles, "
+        f"with opportunities to further strengthen advanced problem-solving and system-level skills."
+    )
+
+    # Roadmap
+    # -------------------------
+# SMART PROFESSIONAL ROADMAP
+# ------------------------
+
+    roadmap = []
 
     for skill in missing_skills:
-        improvements.append(f"Improve your {skill} skills to match job requirements")
 
+        if skill in ["data structures", "algorithms"]:
+            roadmap.append({
+                "skill": skill,
+                "priority": "High",
+                "difficulty": "Advanced",
+                "time": "4 Weeks",
+                "impact_score": 95,
+                "impact": "Critical for technical interviews and backend engineering roles.",
+                "weekly_plan": [
+                    "Master core concepts & complexity analysis",
+                    "Solve 50+ structured coding problems",
+                    "Implement custom data structures",
+                    "Mock interview preparation"
+                ]
+            })
+
+        elif skill in ["sql"]:
+            roadmap.append({
+                "skill": skill,
+                "priority": "High",
+                "difficulty": "Intermediate",
+                "time": "3 Weeks",
+                "impact_score": 85,
+                "impact": "Essential for backend systems and data-driven applications.",
+                "weekly_plan": [
+                    "Database fundamentals & normalization",
+                    "Advanced queries & joins",
+                    "Indexing & performance tuning",
+                    "Build data-driven mini project"
+                ]
+            })
+
+        elif skill in ["react", "flask", "django"]:
+            roadmap.append({
+                "skill": skill,
+                "priority": "Medium",
+                "difficulty": "Intermediate",
+                "time": "3 Weeks",
+                "impact_score": 75,
+                "impact": "Improves employability for full-stack roles.",
+                "weekly_plan": [
+                    "Core framework fundamentals",
+                    "State management / APIs",
+                    "Build complete project",
+                    "Deploy & optimize"
+                ]
+            })
+
+        else:
+            roadmap.append({
+                "skill": skill,
+                "priority": "Medium",
+                "difficulty": "Beginner",
+                "time": "2 Weeks",
+                "impact_score": 60,
+                "impact": "Strengthens overall technical foundation.",
+                "weekly_plan": [
+                    "Understand basics",
+                    "Hands-on practice",
+                    "Small implementation project",
+                    "Add to resume"
+                ]
+            })
+
+    # Sort by impact score
+    roadmap = sorted(roadmap, key=lambda x: x["impact_score"], reverse=True)
+
+    # Strengths & Improvements
+    strengths = [f"Strong knowledge of {skill}" for skill in matched_skills]
+    improvements = [
+        f"Improve your {skill} skills to match job requirements"
+        for skill in missing_skills
+    ]
+
+# Job Role Suggestions
+# -------------------------
+
+    JOB_ROLES = {
+        "Backend Developer": ["python", "django", "flask", "sql", "api"],
+        "Frontend Developer": ["javascript", "react", "html", "css"],
+        "Full Stack Developer": ["python", "django", "javascript", "react", "sql"],
+        "Data Analyst": ["python", "pandas", "numpy", "sql"],
+        "DevOps Engineer": ["docker", "kubernetes", "aws", "linux", "ci/cd"]
+    }
+
+    job_matches = []
+
+    for role, skills_required in JOB_ROLES.items():
+        matched = list(set(skills_required) & set(resume_skills))
+        missing = list(set(skills_required) - set(resume_skills))
+
+        fit_percent = int((len(matched) / len(skills_required)) * 100)
+
+        if fit_percent >= 40:
+            job_matches.append({
+                "role": role,
+                "fit": fit_percent,
+                "matched": matched,
+                "missing": missing
+            })
+
+    # 🔥 SORT AFTER APPENDING
+    job_matches = sorted(job_matches, key=lambda x: x["fit"], reverse=True)
+            
     return JsonResponse({
     "summary": summary,
     "match_percent": round(match_percent, 2),
@@ -233,5 +308,6 @@ and aligning your academic or project work more closely with the job requirement
     "missing_skills": missing_skills,
     "roadmap": roadmap,
     "strengths": strengths,
-    "improvements": improvements
+    "improvements": improvements,
+    "job_matches": job_matches
 })
