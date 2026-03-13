@@ -1,59 +1,61 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("upload.js loaded ✅");
-
-  // Elements
   const browseBtn = document.getElementById("browse-btn");
   const fileInput = document.getElementById("resume-upload");
   const fileNameText = document.getElementById("file-name");
   const dropArea = document.getElementById("drop-area");
   const form = document.getElementById("resumeForm");
   const jobDescInput = document.getElementById("job-description");
+  const analyzeBtn = document.getElementById("analyze-btn");
+  const statusText = document.getElementById("form-status");
 
-  if (!browseBtn || !fileInput || !form) {
-    console.error("❌ Required upload elements not found");
+  if (!browseBtn || !fileInput || !dropArea || !form || !jobDescInput || !analyzeBtn || !statusText) {
+    console.error("Required upload elements not found.");
     return;
   }
 
   const allowedExtensions = ["pdf", "doc", "docx", "txt"];
 
-  // ========================
-  // OPEN FILE EXPLORER
-  // ========================
-  browseBtn.addEventListener("click", function () {
-    fileInput.click();
-  });
+  function setStatus(message, isError) {
+    statusText.textContent = message;
+    statusText.style.color = isError ? "#c62828" : "#344054";
+  }
 
-  // ========================
-  // FILE VALIDATION
-  // ========================
+  function setSubmittingState(isSubmitting) {
+    analyzeBtn.disabled = isSubmitting;
+    analyzeBtn.textContent = isSubmitting ? "Analyzing..." : "Analyze Resume";
+  }
+
   function handleFile(file) {
+    if (!file) {
+      return false;
+    }
+
     const ext = file.name.split(".").pop().toLowerCase();
 
     if (!allowedExtensions.includes(ext)) {
-      alert("❌ Invalid file type.\nAllowed: PDF, DOC, DOCX, TXT");
+      setStatus("Invalid file type. Allowed: PDF, DOC, DOCX, TXT.", true);
       fileInput.value = "";
       fileNameText.textContent = "";
       return false;
     }
 
     fileNameText.textContent = "Selected file: " + file.name;
+    setStatus("", false);
     return true;
   }
 
-  // ========================
-  // FILE SELECT (BROWSE)
-  // ========================
+  browseBtn.addEventListener("click", function () {
+    fileInput.click();
+  });
+
   fileInput.addEventListener("change", function () {
     if (fileInput.files.length > 0) {
       handleFile(fileInput.files[0]);
     }
   });
 
-  // ========================
-  // DRAG & DROP
-  // ========================
-  dropArea.addEventListener("dragover", function (e) {
-    e.preventDefault();
+  dropArea.addEventListener("dragover", function (event) {
+    event.preventDefault();
     dropArea.style.borderColor = "#5b6dfa";
   });
 
@@ -61,33 +63,35 @@ document.addEventListener("DOMContentLoaded", function () {
     dropArea.style.borderColor = "#bfc6e9";
   });
 
-  dropArea.addEventListener("drop", function (e) {
-    e.preventDefault();
+  dropArea.addEventListener("drop", function (event) {
+    event.preventDefault();
     dropArea.style.borderColor = "#bfc6e9";
 
-    if (e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      fileInput.files = e.dataTransfer.files;
+    if (event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      fileInput.files = event.dataTransfer.files;
       handleFile(file);
     }
   });
 
-  // ========================
-  // FORM SUBMIT → DJANGO
-  // ========================
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    setStatus("", false);
 
     const resumeFile = fileInput.files[0];
     const jobDesc = jobDescInput.value.trim();
 
     if (!resumeFile) {
-      alert("⚠️ Please upload a resume file");
+      setStatus("Please upload a resume file.", true);
+      return;
+    }
+
+    if (!handleFile(resumeFile)) {
       return;
     }
 
     if (!jobDesc) {
-      alert("⚠️ Please paste job description");
+      setStatus("Please paste a job description.", true);
       return;
     }
 
@@ -95,27 +99,36 @@ document.addEventListener("DOMContentLoaded", function () {
     formData.append("resume", resumeFile);
     formData.append("job_desc", jobDesc);
 
+    setSubmittingState(true);
+    setStatus("Analyzing your resume. Please wait...", false);
+
     try {
       const response = await fetch("/analyze/", {
         method: "POST",
-        body: formData,
+        body: formData
       });
 
-      if (!response.ok) {
-        throw new Error("Server error");
+      let data = null;
+      const responseType = response.headers.get("content-type") || "";
+
+      if (responseType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const rawText = await response.text();
+        throw new Error(rawText || "The server returned a non-JSON response.");
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "The server could not analyze the resume.");
+      }
 
-      // Save result for result.html
       localStorage.setItem("analysisResult", JSON.stringify(data));
-
-      // Redirect to result page
       window.location.href = "/result/";
-
     } catch (error) {
-      console.error(error);
-      alert("❌ Error analyzing resume. Try again.");
+      console.error("Analyze request failed:", error);
+      setStatus(error.message || "Error analyzing resume. Try again.", true);
+    } finally {
+      setSubmittingState(false);
     }
   });
 });

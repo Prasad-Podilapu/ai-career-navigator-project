@@ -3,98 +3,358 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Analysis Result</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="{% static 'analyzer/index.css' %}">
   <link rel="stylesheet" href="{% static 'analyzer/result.css' %}">
 </head>
-
 <body>
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">AI Career Navigator</p>
+      <h1>Resume Analysis Result</h1>
+    </div>
+    <a class="back-link" href="{% url 'upload' %}">Analyze another resume</a>
+  </header>
 
-<header class="main-header">
-  <div class="logo">AI Career Navigator</div>
-  <a href="{% url 'upload' %}" class="upload-link">Upload Again</a>
-</header>
+  <main class="result-container">
+    <section class="result-topbar">
+      <section class="result-hero">
+        <div class="result-hero-copy">
+          <p class="result-hero-kicker">Analysis Workspace</p>
+          <h2>Candidate Review Board</h2>
+          <p class="result-hero-text">
+            Review fit, ATS readiness, skill coverage, and improvement areas in one recruiter-style dashboard.
+          </p>
+        </div>
+      </section>
 
-<section class="result-container">
+      <div class="sidebar-stats top-stats">
+        <article class="sidebar-stat-card">
+          <span class="sidebar-stat-label">Overall Match</span>
+          <strong id="sidebar-match-percent">0%</strong>
+        </article>
+        <article class="sidebar-stat-card">
+          <span class="sidebar-stat-label">ATS Score</span>
+          <strong id="sidebar-ats-score">0%</strong>
+        </article>
+        <article class="sidebar-stat-card">
+          <span class="sidebar-stat-label">Skill Score</span>
+          <strong id="sidebar-skill-score">0%</strong>
+        </article>
+      </div>
+    </section>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" data-tab="summary">Summary</button>
-    <button class="tab" data-tab="skills">Skills</button>
-    <button class="tab" data-tab="jobs">Job Matches</button>
-    <button class="tab" data-tab="roadmap">Roadmap</button>
-    <button class="tab" data-tab="strengths">Strengths</button>
-<button class="tab" data-tab="improvements">Improvements</button>
+    <section class="tabs" aria-label="Result sections">
+      <button class="tab active" type="button" data-tab="summary">
+        <span class="tab-copy">
+          <span class="tab-title">Summary</span>
+          <span class="tab-hint">Executive fit overview</span>
+        </span>
+      </button>
+      <button class="tab" type="button" data-tab="ats">
+        <span class="tab-copy">
+          <span class="tab-title">ATS Resume</span>
+          <span class="tab-hint">Score, checks, and download</span>
+        </span>
+      </button>
+      <button class="tab" type="button" data-tab="skills">
+        <span class="tab-copy">
+          <span class="tab-title">Skills</span>
+          <span class="tab-hint">Coverage and missing keywords</span>
+        </span>
+      </button>
+      <button class="tab" type="button" data-tab="jobs">
+        <span class="tab-copy">
+          <span class="tab-title">Job Matches</span>
+          <span class="tab-hint">Closest role alignment</span>
+        </span>
+      </button>
+      <button class="tab" type="button" data-tab="roadmap">
+        <span class="tab-copy">
+          <span class="tab-title">Roadmap</span>
+          <span class="tab-hint">Focused next steps</span>
+        </span>
+      </button>
+      <button class="tab" type="button" data-tab="strengths">
+        <span class="tab-copy">
+          <span class="tab-title">Strengths</span>
+          <span class="tab-hint">Verified alignment signals</span>
+        </span>
+      </button>
+      <button class="tab" type="button" data-tab="improvements">
+        <span class="tab-copy">
+          <span class="tab-title">Improvements</span>
+          <span class="tab-hint">High-value fixes to make</span>
+        </span>
+      </button>
+    </section>
 
-  </div>
+    <section class="result-main-panels">
+    <section class="tab-content active" id="summary">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Overview</p>
+          <h2>Analysis Summary</h2>
+        </div>
+        <p class="section-copy">Read this first for a compact view of candidate fit, matched skills, and visible gaps.</p>
+      </div>
+      <div class="summary-box" id="summary-text"></div>
 
-  <!-- Summary -->
-  <div class="tab-content active" id="summary">
-    <h2>🧠 Analysis Summary</h2>
-    <p id="summary-text"></p>
-    <h3>Match Percentage</h3>
-    <div class="match-box">
-  <div class="match-text" id="match-percent"></div>
-  <div class="progress-bar">
-    <div class="progress-fill" id="progress-fill"></div>
-  </div>
-  <p style="font-size:14px; color:#666;">
-  Based on semantic similarity between resume and job description
-</p>
+      <div class="summary-evidence-strip">
+        <article class="summary-evidence-card">
+          <span class="summary-evidence-label">Matched Skills</span>
+          <strong id="summary-matched-count">0</strong>
+        </article>
+        <article class="summary-evidence-card">
+          <span class="summary-evidence-label">Missing Skills</span>
+          <strong id="summary-missing-count">0</strong>
+        </article>
+        <article class="summary-evidence-card">
+          <span class="summary-evidence-label">Required Skills</span>
+          <strong id="summary-required-count">0</strong>
+        </article>
+        <article class="summary-evidence-card">
+          <span class="summary-evidence-label">ATS Sections</span>
+          <strong id="summary-ats-sections">0</strong>
+        </article>
+      </div>
 
-  <h3>Overall Match Overview</h3>
-<canvas id="matchChart" height="120"></canvas>
+      <div class="summary-sections-grid" id="summary-sections-grid">
+        <article class="summary-section-card">
+          <p class="summary-section-label">Candidate Profile</p>
+          <p class="summary-section-text" id="summary-candidate-profile"></p>
+        </article>
 
-</div>
+        <article class="summary-section-card">
+          <p class="summary-section-label">Relevant Skills</p>
+          <p class="summary-section-text" id="summary-relevant-skills"></p>
+        </article>
 
-  </div>
+        <article class="summary-section-card">
+          <p class="summary-section-label">Job Match Insight</p>
+          <p class="summary-section-text" id="summary-job-match-insight"></p>
+        </article>
 
-  <!-- Skills -->
-  <div class="tab-content" id="skills">
-   <h2>🛠️ Skills</h2>
+        <article class="summary-section-card">
+          <p class="summary-section-label">Skill Gaps</p>
+          <p class="summary-section-text" id="summary-skill-gaps"></p>
+        </article>
+      </div>
 
-    <h3>Matched Skills</h3>
-    <ul id="matched-skills"></ul>
+      <div class="summary-metrics">
+        <div class="metric-card">
+          <p class="metric-label">Match Percentage</p>
+          <p class="match-text" id="match-percent">0%</p>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <p class="match-note">The score reflects overall resume-to-role alignment.</p>
+        </div>
 
-    <h3>Missing Skills</h3>
-    <ul id="missing-skills"></ul>
+        <div class="chart-card">
+          <div class="chart-wrapper">
+            <canvas id="matchChart" aria-label="Match percentage chart"></canvas>
+          </div>
+        </div>
+      </div>
 
-    <h3>Skill Comparison</h3>
-    <canvas id="skillChart" height="150"></canvas>
+      <div class="overview-box">
+        <h3>Quick Overview</h3>
+        <p id="overview-text"></p>
+      </div>
+    </section>
 
-  </div>
+    <section class="tab-content" id="ats">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Resume Quality</p>
+          <h2>ATS Resume Check</h2>
+        </div>
+        <p class="section-copy">Use this tab to review ATS structure quality and download a cleaner ATS-style resume.</p>
+      </div>
 
-  <!-- Job Matches -->
-  <div class="tab-content" id="jobs">
-    <h2>💼Job Match Suggestions</h2>
-    <div class="job-cards" id="job-matches"></div>
+      <div class="ats-hero-card">
+        <div class="ats-hero-copy">
+          <p class="metric-label">ATS Score</p>
+          <p class="ats-score-text" id="ats-score-value">0%</p>
+          <p class="skill-sub" id="ats-score-label"></p>
+        </div>
 
-  </div>
-  <!-- Strengths -->
-<div class="tab-content" id="strengths">
-  <h2>💪Your Strengths</h2>
-  <ul id="strengths-list"></ul>
-</div>
+        <div class="ats-hero-actions">
+          <div class="ats-mini-stat">
+            <span class="ats-mini-label">Keyword Coverage</span>
+            <strong id="ats-keyword-coverage">0%</strong>
+          </div>
+          <div class="ats-mini-stat">
+            <span class="ats-mini-label">Core Sections Found</span>
+            <strong id="ats-sections-found">0</strong>
+          </div>
+          <button class="download-ats-btn" id="download-ats-resume" type="button">Download ATS Resume (.docx)</button>
+        </div>
+      </div>
 
-<!-- Improvements -->
-<div class="tab-content" id="improvements">
-  <h2>📈Suggested Improvements</h2>
-  <ul id="improvements-list"></ul>
-</div>
+      <div class="ats-grid">
+        <div class="skills-card">
+          <h3>ATS Checks</h3>
+          <p class="skill-sub">Each item is scored only from the uploaded resume content and the job description.</p>
+          <div id="ats-checks-list" class="ats-checks-list"></div>
+        </div>
 
-  <!-- Roadmap -->
-  <div class="tab-content" id="roadmap">
-    <h2>🗺️Career Roadmap</h2>
-    <ul id="roadmap-list"></ul>
-  </div>
+        <div class="skills-card">
+          <h3>ATS Improvements</h3>
+          <p class="skill-sub">Recommendations are based on missing structure or missing job-description skills.</p>
+          <div id="ats-improvements-list" class="ats-improvements-list"></div>
+        </div>
+      </div>
 
-</section>
+      <div class="skills-card ats-preview-card">
+        <div class="ats-preview-head">
+          <div>
+            <h3>ATS Resume Preview</h3>
+            <p class="skill-sub">This preview restructures the uploaded resume into a cleaner ATS-friendly format using only detected resume content.</p>
+          </div>
+        </div>
+        <pre id="ats-resume-preview" class="ats-resume-preview"></pre>
+      </div>
+    </section>
 
-<!-- JS -->
- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'analyzer/result.js' %}"></script>
-<script src="{% static 'analyzer/result.js' %}"></script>
+    <section class="tab-content" id="skills">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Skill Coverage</p>
+          <h2>Skills Snapshot</h2>
+        </div>
+        <p class="section-copy">Compare resume skills against the job description using only extracted, visible keywords.</p>
+      </div>
+
+      <div class="skills-dashboard-grid">
+        <div class="skills-hero-card">
+          <div class="skills-hero-copy">
+            <p class="metric-label">Skill Match Score</p>
+            <p class="skills-score-text" id="skill-match-score">0%</p>
+            <p class="skill-sub" id="skills-score-note"></p>
+          </div>
+          <div class="skills-score-ring" id="skill-score-ring">
+            <div class="skills-score-ring-inner">
+              <span id="skill-score-ring-value">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skills-summary-card">
+          <div class="skills-mini-stat">
+            <span class="skills-mini-label">Required</span>
+            <strong id="required-skill-count">0</strong>
+          </div>
+          <div class="skills-mini-stat">
+            <span class="skills-mini-label">Matched</span>
+            <strong id="matched-skill-count">0</strong>
+          </div>
+          <div class="skills-mini-stat">
+            <span class="skills-mini-label">Missing</span>
+            <strong id="missing-skill-count">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="skills-analytics-grid">
+        <div class="skills-card">
+          <h3>Critical Skills</h3>
+          <p class="skill-sub">High-signal job-description skills and whether the resume covers them.</p>
+          <div id="critical-skills-list" class="critical-skills-list"></div>
+        </div>
+
+        <div class="skills-card">
+          <h3>Evidence-Based Skill Insight</h3>
+          <p class="skill-sub">Generated only from extracted resume and job-description skills.</p>
+          <div class="skill-insight-box" id="skill-insight-text"></div>
+        </div>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skills-card">
+          <h3>Matched Skills</h3>
+          <p class="skill-sub">Capabilities already reflected in your resume.</p>
+          <div class="skill-tags" id="matched-skills"></div>
+        </div>
+
+        <div class="skills-card">
+          <h3>Missing Skills</h3>
+          <p class="skill-sub">Important gaps to strengthen for better fit.</p>
+          <div class="skill-tags missing" id="missing-skills"></div>
+        </div>
+      </div>
+
+      <div class="skills-lower-grid">
+        <div class="skills-card">
+          <h3>Skill Comparison</h3>
+          <p class="skill-sub">Visual comparison of matched and missing required skills.</p>
+          <div class="chart-wrapper skill-chart-wrapper">
+            <canvas id="skillChart" aria-label="Matched versus missing skills chart"></canvas>
+          </div>
+        </div>
+
+        <div class="skills-card">
+          <h3>Recommended Skills to Learn</h3>
+          <p class="skill-sub">Only skills found in the job description but missing from the resume.</p>
+          <div class="skill-tags missing" id="recommended-skills"></div>
+        </div>
+      </div>
+
+      <div class="skills-card category-progress-card">
+        <h3>Skill Category Progress</h3>
+        <p class="skill-sub">Coverage of required skills grouped into ATS-friendly categories.</p>
+        <div id="category-progress-list" class="category-progress-list"></div>
+      </div>
+    </section>
+
+    <section class="tab-content" id="jobs">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Role Alignment</p>
+          <h2>Recommended Job Matches</h2>
+        </div>
+        <p class="section-copy">These roles are ranked from the extracted resume skills rather than invented experience claims.</p>
+      </div>
+      <div id="job-matches"></div>
+    </section>
+
+    <section class="tab-content" id="roadmap">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Action Plan</p>
+          <h2>Suggested Skill Roadmap</h2>
+        </div>
+        <p class="section-copy">Use this section as a practical improvement plan for skills the job description asks for but the resume does not show.</p>
+      </div>
+      <div class="roadmap-container" id="roadmap-list"></div>
+    </section>
+
+    <section class="tab-content" id="strengths">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">What Is Working</p>
+          <h2>Verified Strengths</h2>
+        </div>
+        <p class="section-copy">These are the strongest alignment signals found in both the resume and the job description.</p>
+      </div>
+      <div class="strength-grid" id="strengths-list"></div>
+    </section>
+
+    <section class="tab-content" id="improvements">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Improve Your Fit</p>
+          <h2>Evidence-Based Improvements</h2>
+        </div>
+        <p class="section-copy">Focus on these missing areas if they reflect real experience or genuine learning goals.</p>
+      </div>
+      <div class="improvements-grid" id="improvements-list"></div>
+    </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'analyzer/result.js' %}"></script>
 </body>
 </html>
